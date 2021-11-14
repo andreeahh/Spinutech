@@ -1,0 +1,99 @@
+﻿@{
+    ViewData["Title"] = "Andrea Nguyen - November 14, 2021";
+    var colors = new List<string>() { "Red", "Green", "Blue", "Orange", "Yellow" };
+}
+
+<div class="text-center">
+    <h1>Andrea Nguyen - November 14, 2021 </h1>
+    <div class="row">
+        @foreach (var color in colors)
+        {
+            <div class="col">
+                <div class="shape">
+                    <div class="circle @color.ToString().ToLower()" data-color="@color"></div>
+                    <p class="color-label">@color</p>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row">
+        @foreach (var color in colors)
+        {
+            <div class="col">
+                <div class="shape collapse">
+                    <p class="color-label">@color</p>
+                    <div class="square @color.ToString().ToLower()" data-color="@color"></div>
+                </div>
+            </div>
+        }
+    </div>
+    <p>Made with: Razor, Bootstrap, and jQuery.</p>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $(".shape").hover(function () {
+                //update opacity on hover
+                updateOpacity();
+            }, function () {
+                //when a shape is no longer hovered over, unfade all shapes
+                $(".shape").each(function () {
+                    $(this).css("opacity", "1");
+                })
+            });
+
+            $(".circle").click(function () {
+                //get color of circle
+                var color = $(this).data("color");
+                //hide the clicked circle and show the square of the same color
+                showHideShape("circle", color);
+            });
+
+            $(".square").click(function () {
+                //get color of square
+                var color = $(this).data("color");
+                //hide the clicked square and show the circle of the same color
+                showHideShape("square", color);
+                //place newly shown circle as the first one in the row
+                updateCirclesOrdering(color);
+            });
+        })
+
+        function updateOpacity() {
+            //loop through all shapes
+            $(".shape").each(function () {
+                //find hovered shape
+                if ($(this).is(":hover")) {
+                    //keep opacity at 100% for hovered shape
+                    $(this).css("opacity", "1");
+                } else {
+                    //change opacity to 50% for other shapes
+                    $(this).css("opacity", "0.5");
+                }
+            })
+        }
+
+        function showHideShape(shape, color) {
+            //hide selected shape
+            $("." + shape + "[data-color='" + color + "']").parent().hide();
+            //determine whether selected shape is a circle or square
+            if (shape == "circle") {
+                //show square equivalent
+                $(".square[data-color='" + color + "']").parent().show();
+            } else {
+                //show circle equivalent
+                $(".circle[data-color='" + color + "']").parent().show();
+            }
+        }
+
+        function updateCirclesOrdering(color) {
+            //remove order-first class from all circles
+            $(".circle").parent().parent().removeClass("order-first")
+
+            //apply order-first class to the selected circle to make it first in the row
+            $(".circle[data-color='" + color + "']").parent().parent().addClass("order-first");
+        }
+    </script>
+}
+
